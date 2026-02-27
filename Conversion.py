@@ -1,8 +1,13 @@
+import sys        # library: for commandline input 
 import srt        # library used to perform operatons on subtitles.
 import pykakasi   # library used for conversion. 
 
+# Input file from user using cmd argument: 
+inputFile = sys.argv[1]; 
+output_file = inputFile.split('.')[0] + '_romaji' + ".srt"
+
 # Read File Using Srt Library : 
-with open("japanese_sub.srt", "r", encoding="utf-8") as subtitle_file:
+with open(inputFile, "r", encoding="utf-8") as subtitle_file:
   content = subtitle_file.read()  
   
 # Parse Subtitles into Objects 
@@ -25,5 +30,5 @@ for sub in subtitles:
 # write to new file: 
 new_content = srt.compose(subtitles)
 
-with open("romaji_sub.srt", "x", encoding="utf-8") as output_file: 
+with open(output_file, "x", encoding="utf-8") as output_file: 
   output_file.write(new_content)
