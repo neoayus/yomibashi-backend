@@ -1,9 +1,11 @@
+import os 
 import srt        # library used to perform operatons on subtitles.
 import pykakasi   # library used for conversion. 
 
 
 def convert_srt(input_file):
-  output_file = input_file.split('.')[0] + '_romaji' + ".srt"
+  name = os.path.basename(input_file).split('.')[0] + '_romaji' + ".srt"
+  output_file = os.path.join("outputs", name)
 
   # Read File Using Srt Library : 
   with open(input_file, "r", encoding="utf-8") as f:
