@@ -29,8 +29,15 @@ async def upload(file: UploadFile = File(...)):
   new_file = convert_srt(upload_path)
   
   # return converted file 
-  return FileResponse(
-    path=new_file,
-    filename=os.path.basename(new_file),
-    media_type="text/plain"
-  )
+  # return FileResponse(
+  #   path=new_file,
+  #   filename=os.path.basename(new_file),
+  #   media_type="text/plain"
+  # )
+  
+  # return JSON instead.. 
+  return{
+    "original_file": file.filename, 
+    "converted_file": os.path.basename(new_file),
+    "converted_path": new_file 
+  }
