@@ -1,16 +1,11 @@
-from fastapi import FastAPI, UploadFile, File
 import shutil 
 
-# import conversion function 
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import FileResponse
 from Conversion import convert_srt 
 
 app = FastAPI()
 
-# upload file 
-# @app.post("/upload")
-# def upload_file(file: UploadFile = File(...)):
-#     return {"filename": file.filename}
-  
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
 
@@ -21,8 +16,9 @@ async def upload(file: UploadFile = File(...)):
   # convert file 
   new_file = convert_srt(file.filename)
   
-  # return new file 
-  return{
-    "saved": file.filename, 
-    "converted": new_file
-  }
+  # return converted file 
+  return FileResponse(
+    path=new_file,
+    filename=new_file, 
+    media_type="text/plain"
+  )
