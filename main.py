@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from Conversion import convert_srt 
 
 app = FastAPI()
+
+# Allow frontend to access backend 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,6 +17,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Directories 
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
@@ -28,16 +34,25 @@ async def upload(file: UploadFile = File(...)):
   # convert file 
   new_file = convert_srt(upload_path)
   
-  # return converted file 
-  # return FileResponse(
-  #   path=new_file,
-  #   filename=os.path.basename(new_file),
-  #   media_type="text/plain"
-  # )
-  
-  # return JSON instead.. 
+  # return JSON with converted file info
   return{
     "original_file": file.filename, 
     "converted_file": os.path.basename(new_file),
     "converted_path": new_file 
   }
+
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+  # Build the full path of the converted file
+  file_path = os.path.join(UPLOAD_DIR, filename)
+  
+  # Check if file already exists
+  if not os.path.exists(file_path): 
+    return {"error": "file not found"}
+  
+  # Return file content 
+  return FileResponse(
+    path=file_path
+    filename=os.path.basename(file_path),
+    media_type="text/plain"
+  )
